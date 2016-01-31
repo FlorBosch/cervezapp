@@ -1,8 +1,10 @@
 package lgd.cervezapp.ui.activities;
 
+import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,8 +21,12 @@ import lgd.cervezapp.ui.fragments.DrawerFragmentsBuilder;
 public class HomeActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
     private DrawerAdapter drawerAdapter;
+
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,29 @@ public class HomeActivity extends AppCompatActivity {
         drawerAdapter = new DrawerAdapter(this);
         mDrawerList.setAdapter(drawerAdapter);
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+
+        mTitle = mDrawerTitle = getTitle();
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,
+                mDrawerLayout,
+                R.string.drawer_open,
+                R.string.drawer_close
+        ) {
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                setActionBarTitle(mTitle);
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                setActionBarTitle(mDrawerTitle);
+            }
+        };
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     @Override
@@ -42,11 +71,22 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
 
-        if (id == R.id.action_settings)
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -64,10 +104,16 @@ public class HomeActivity extends AppCompatActivity {
         mDrawerList.setItemChecked(position, true);
         setTitle(item.getName());
         mDrawerLayout.closeDrawer(mDrawerList);
+
     }
 
     @Override
     public void setTitle(CharSequence title) {
+        mTitle = title;
+        setActionBarTitle(title);
+    }
+
+    private void setActionBarTitle(CharSequence title){
         getSupportActionBar().setTitle(title);
     }
 

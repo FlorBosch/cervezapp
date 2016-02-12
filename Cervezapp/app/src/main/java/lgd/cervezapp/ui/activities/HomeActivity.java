@@ -1,11 +1,11 @@
 package lgd.cervezapp.ui.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,11 +14,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import lgd.cervezapp.R;
+import lgd.cervezapp.ui.activities.listeners.Transactional;
 import lgd.cervezapp.ui.adapters.DrawerAdapter;
 import lgd.cervezapp.ui.adapters.entities.DrawerItem;
-import lgd.cervezapp.ui.fragments.DrawerFragmentsBuilder;
+import lgd.cervezapp.ui.fragments.DrawerTransactionManager;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends BaseActivity implements Transactional {
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
@@ -41,12 +42,8 @@ public class HomeActivity extends AppCompatActivity {
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
         mTitle = mDrawerTitle = getTitle();
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,
-                mDrawerLayout,
-                R.string.drawer_open,
-                R.string.drawer_close
-        ) {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close) {
+
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
                 setActionBarTitle(mTitle);
@@ -56,12 +53,10 @@ public class HomeActivity extends AppCompatActivity {
                 super.onDrawerOpened(drawerView);
                 setActionBarTitle(mDrawerTitle);
             }
+
         };
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     @Override
@@ -87,34 +82,37 @@ public class HomeActivity extends AppCompatActivity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     private void selectItem(int position) {
 
         DrawerItem item = drawerAdapter.getItem(position);
-        Fragment fragment = DrawerFragmentsBuilder.getInstance().getFragment(item.getAction());
 
+        DrawerTransactionManager.getInstance().startTransaction(item.getAction(), this);
+
+        mDrawerList.setItemChecked(position, true);
+        setTitle(item.getName());
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+    public void startFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();
 
-        mDrawerList.setItemChecked(position, true);
-        setTitle(item.getName());
-        mDrawerLayout.closeDrawer(mDrawerList);
+    }
 
+    public void startActivity(Class activity){
+        Intent intent = new Intent(this, activity);
+        this.startActivity(intent);
     }
 
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
         setActionBarTitle(title);
-    }
-
-    private void setActionBarTitle(CharSequence title){
-        getSupportActionBar().setTitle(title);
     }
 
     public class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -124,4 +122,5 @@ public class HomeActivity extends AppCompatActivity {
             selectItem(position);
         }
     }
+
 }

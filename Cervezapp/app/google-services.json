@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_id": "cervezapp-d4cf8",
+    "project_number": "780250447092",
+    "name": "cervezapp"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780250447092:android:1f482ac9196039db",
+        "client_id": "android:lgd.cervezapp",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "lgd.cervezapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "780250447092-ic99rd860r1jgt63iq0u7kv9j9eosao9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "lgd.cervezapp",
+            "certificate_hash": "19C4AC59C35215D21766B0337E13E851C89C74DE"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
